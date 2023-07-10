@@ -1,25 +1,101 @@
-const fs = require('node:fs/promises');
-const path  = require('node:path');
+const express = require('express');
+const fileService = require('./file.service');
+const app = express();
 
-const fGenMaker = async () => {
-    const mainPath = path.join(process.cwd(), 'mainFolder');
+app.use(express.json());
+app.use(express.urlencoded({extended: true}))
 
-    await fs.mkdir(mainPath);
-    const fileNames = ['file1.txt', 'file2.txt', 'file3.txt', 'file4.txt', 'file5.txt'];
-    const folderNames = ['folder1', 'folder2', 'folder3', 'folder4', 'folder5'];
+app.get('/users', async (req, res)=> {
+    const users =  await fileService.readDB();
+    res.json(users)
+});
 
-    for (const file of fileNames) {
-       await fs.writeFile(path.join(mainPath, file), 'Hello OKTEN')
+app.post('/users',async (req, res)=> {
+    const {id, name, gender, age} = req.body;
+
+    if(!name) {
+        return res.status(400).json('No name added');
     }
 
-    for (const folder of folderNames) {
-        await fs.mkdir(path.join(mainPath, folder));
+    if(!gender) {
+        return res.status(400).json('No gender added');
     }
 
-  const files = await fs.readdir(mainPath);
-    for (const file of files) {
-        const stat = await fs.stat(path.join(mainPath, file));
-        console.log(path.join(mainPath, file),' : ',stat.isDirectory() ? 'folder' : 'file');
+    if(!age || age < 10 || age > 100) {
+        return res.status(400).json('No age added');
     }
-}
-fGenMaker();
+
+    const users  = await fileService.readDB();
+
+    const newUser = {
+        id: users.length ? users[users.length -1 ].id + 1 : 1,
+        name,
+        gender,
+        age
+    }
+
+    users.push(newUser);
+
+    await fileService.writeDB(users);
+
+    res.status(201).json(newUser);
+});
+
+app.get('/users/:id', async (req, res) => {
+    const {id} = req.params;
+
+    const users = await fileService.readDB();
+
+    const user = users.find((user) => user.id === +id);
+    if (!user) {
+        return res.status(404).json('User non found');
+    }
+
+    res.json(user);
+});
+app.patch('/users/:id', async (req, res) => {
+    const {id} = req.params;
+    const {name, age} = req.body;
+
+    if (name && name.length < 5) {
+        return res.status(400).json('name is wrong');
+    }
+    if (age && (age < 10 || age > 110)) {
+        return res.status(400).json('age is wrong');
+    }
+
+    const users = await fileService.readDB();
+    const user = users.find((user) => user.id === +id);
+
+    if (!user) {
+        return res.status(422).json('user not found');
+    }
+    if (name) user.name = name;
+    if (age) user.age = age;
+
+    await fileService.writeDB(users);
+
+    res.status(201).json(user);
+});
+
+
+app.delete('/users/:id', async (req, res) => {
+    const {id} = req.params;
+
+    const users = await fileService.readDB();
+    const index = users.findIndex((user) => user.id === +id);
+
+    if (index === -1) {
+        return res.status(422).json('user not found');
+    }
+    users.splice(index, 1);
+    await fileService.writeDB(users);
+
+    res.sendStatus(204);
+});
+
+const PORT = 5001
+
+app.listen(PORT, () => {
+    console.log(`Server worked on ${PORT} Port []`)
+})
