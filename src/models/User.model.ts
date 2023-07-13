@@ -9,8 +9,8 @@ const userSchema = new Schema(
     },
     age: {
       type: Number,
-      min: [1, "1 is min value to enter."],
-      max: [100, "100 is max value to enter."],
+      min: [1, "Minimum value for age is 1"],
+      max: [199, "Maximum value for age is 199"],
     },
     gender: {
       type: String,
@@ -25,6 +25,7 @@ const userSchema = new Schema(
     password: {
       type: String,
       required: true,
+      select: false,
     },
   },
   {
