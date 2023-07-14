@@ -12,8 +12,8 @@ export class UserValidator {
     .lowercase()
     .trim()
     .messages({
-      "string.empty": "Це поле обов'язкове",
-      "string.email": "Адрес электронной почты имеет неверный формат",
+      "string.empty": "Its required field",
+      "string.email": "Wrong format email",
     });
   static password = Joi.string().regex(regexConstants.PASSWORD).trim();
 
@@ -29,5 +29,10 @@ export class UserValidator {
     name: this.firstName,
     age: this.age,
     gender: this.gender,
+  });
+
+  static login = Joi.object({
+    email: this.email.required(),
+    password: this.password.required(),
   });
 }

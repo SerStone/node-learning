@@ -34,20 +34,6 @@ class UserController {
     }
   }
 
-  public async create(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<Response<IUser>> {
-    try {
-      const createdUser = await userService.create(req.body);
-
-      return res.status(201).json(createdUser);
-    } catch (e) {
-      next(e);
-    }
-  }
-
   public async updatedById(
     req: Request,
     res: Response,
@@ -73,7 +59,7 @@ class UserController {
       const { userId } = req.params;
       await userService.deleteById(userId);
 
-      return res.sendStatus(200);
+      return res.sendStatus(204);
     } catch (e) {
       next(e);
     }
