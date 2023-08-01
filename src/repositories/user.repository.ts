@@ -6,5 +6,4 @@ class UserRepository {
     return await User.create(data);
   }
 }
-
 export const userRepository = new UserRepository();

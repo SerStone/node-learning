@@ -1,5 +1,6 @@
 import cors from "cors";
 import express, { NextFunction, Request, Response } from "express";
+import fileUpload from "express-fileupload";
 import rateLimit from "express-rate-limit";
 import * as mongoose from "mongoose";
 import * as swaggerUi from "swagger-ui-express";
@@ -37,6 +38,7 @@ app.use(
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(fileUpload());
 
 app.use("/users", userRouter);
 app.use("/auth", authRouter);
