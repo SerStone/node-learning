@@ -7,7 +7,7 @@ import { ApiError } from "../errors";
 import { Action } from "../models/Action.model";
 import { OldPassword } from "../models/OldPassword.model";
 import { Token } from "../models/Token.model";
-import { User } from "../models/User.model";
+import { User } from "../models/User.mode";
 import { ICredentials, ITokenPair, ITokenPayload } from "../types/token.types";
 import { IUser } from "../types/user.type";
 import { emailService } from "./email.service";
