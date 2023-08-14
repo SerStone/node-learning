@@ -9,7 +9,7 @@ const App = () => {
     },[]);
   return (
       <div>
-          {users.map(user=><div key={user._id}>{user.name}</div>)}
+          {users.map(user=><div key={user._id}>{user.name}{user.age}</div>)}
       </div>
   );
 };
